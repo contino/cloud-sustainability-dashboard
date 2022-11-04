@@ -1,0 +1,11 @@
+[flake8]
+max-line-length = 120
+exclude =
+    .env
+    .idea
+    .pytest_cache
+    .test_reports
+    .typings
+    .venv
+    .tests
+    .build
