@@ -1,0 +1,23 @@
+name: CI
+on:
+  pull_request:
+    branches:
+    - main
+jobs:
+  pre-commit:
+    name: pre-commit
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install git-secrets
+      # checkov:skip=CKV_GHA_3:Detected because of the name of the command
+      run: curl -sSLo ./git-secrets https://raw.githubusercontent.com/awslabs/git-secrets/master/git-secrets && chmod +x ./git-secrets && sudo mv ./git-secrets /usr/bin/
+    - uses: actions/checkout@v3
+    - uses: hashicorp/setup-terraform@v2
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install Checkov
+      run: python3 -m pip install -U checkov
+    - name: Install Python development dependencies
+      run: make install_ci
+    - uses: pre-commit/action@v3.0.0
