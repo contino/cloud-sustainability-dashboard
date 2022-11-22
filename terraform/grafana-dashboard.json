@@ -1,0 +1,1910 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_METRICS",
+      "label": "Metrics",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "grafana-athena-datasource",
+      "pluginName": "Amazon Athena"
+    },
+    {
+      "name": "DS_CUR",
+      "label": "CUR",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "grafana-athena-datasource",
+      "pluginName": "Amazon Athena"
+    },
+    {
+      "name": "DS_CLOUDWATCH",
+      "label": "CloudWatch",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "cloudwatch",
+      "pluginName": "CloudWatch"
+    }
+  ],
+  "__elements": [],
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "cloudwatch",
+      "name": "CloudWatch",
+      "version": "1.0.0"
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "8.4.7"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-athena-datasource",
+      "name": "Amazon Athena",
+      "version": "2.2.0"
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1667771779191,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 23,
+      "panels": [],
+      "title": "Sustainability Signals (Global)",
+      "type": "row"
+    },
+    {
+      "description": "",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 29,
+      "options": {
+        "content": "AWS provide a range of services and features that can be used to build in the cloud efficiently.  \nThese metrics, or sustainability signals, measure adoption of some of the services and features that improve energy efficiency.\n<br/> Effective use of these services and features will reduce energy consumption, however the presence of these alone doe not reduce energy consumption. Please note this section doesn't support tag filtering.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.7",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "${DS_METRICS}"
+      },
+      "description": "Resource count of elastic services used, services that can be easily configured to dynamically scale to zero.\n\nElastic resources include EC2 Autoscaling groups and EC2 Kubernetes Cluster Autoscaler.\nNon-Elastic resources include standalone EC2 instances.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 4
+      },
+      "id": 31,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "${DS_METRICS}"
+          },
+          "format": 1,
+          "rawSQL": "SELECT\n  COUNT(CASE WHEN scale_to_zero THEN 1 END) AS \"Elastic resources\", \n  COUNT(CASE WHEN NOT scale_to_zero THEN 1 END) AS \"Non Elastic resources\" \nFROM\n  $__table\nWHERE\n  \"date\" BETWEEN '${__from:date:YYYY-MM-DD}' AND '${__to:date:YYYY-MM-DD}'\n",
+          "refId": "A",
+          "table": "ec2_scaling_data"
+        }
+      ],
+      "title": " Elastic Compute Services",
+      "transformations": [],
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "${DS_METRICS}"
+      },
+      "description": "Number of S3 Buckets that use Lifecycle Policies. Lifecycle Polices can be used to automate data retention and delete data when it it is no longer required",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 4
+      },
+      "id": 34,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "${DS_METRICS}"
+          },
+          "format": 1,
+          "rawSQL": "SELECT\n    COUNT(CASE WHEN lifecycle_policy THEN 1 END) AS \"Lifecycle Policy\", \n    COUNT(CASE WHEN NOT lifecycle_policy THEN 1 END)  AS \"No Lifecycle Policy\"\nFROM\n    $__table\nWHERE\n    \"date\" BETWEEN '${__from:date:YYYY-MM-DD}' AND '${__to:date:YYYY-MM-DD}'\n",
+          "refId": "A",
+          "table": "s3_data"
+        }
+      ],
+      "title": "S3 Lifecycle Policies",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "total_resources": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Elastic Resources": "Count of Elastic EC2 Resources",
+              "Non Elastic Resources": "Count of Non-Elastic EC2 Resources",
+              "lifecycle_policies": "Lifecycle Policies",
+              "no_lifecyle_policies": "No Lifecycle Policies",
+              "total_resources": ""
+            }
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 19,
+      "panels": [],
+      "title": "Instance Types & Physical Processors (Global)",
+      "type": "row"
+    },
+    {
+      "description": "",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 17,
+      "options": {
+        "content": "Different servers with different CPUs have different performance characteristics.\n<br/> To build efficiently in the cloud, select processors that offer satisfactory performance for the use case at the lowest energy cost.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.7",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "${DS_CUR}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "product_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 324
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "processor_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 320
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Physical Processor"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 164
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "vCPU hours"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 101
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Instance Count"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 94
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Product"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 182
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Usage Date"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 162
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Daily vCPU hours"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 87
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Daily Instance Count"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "id": 14,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "${DS_CUR}"
+          },
+          "format": 1,
+          "rawSQL": "WITH\n    cur AS (\n        SELECT *\n        FROM $__table\n        WHERE\n            \"line_item_usage_start_date\" BETWEEN TIMESTAMP '${__from:date:YYYY-MM-DD}' AND TIMESTAMP '${__to:date:YYYY-MM-DD}'\n            AND \"year\" BETWEEN '${__from:date:YYYY}' AND '${__to:date:YYYY}'\n            AND \"month\" BETWEEN '${__from:date:M}' AND '${__to:date:M}'\n            AND ${tag_key_full} = '${tag_value}'\n    )\nSELECT\n    product_physical_processor AS processor_name,\n    product_instance_type AS instance_type,\n    product_product_name AS product_name,\n    SUM(line_item_usage_amount) AS vcpu_hours,\n    COUNT(DISTINCT line_item_resource_id) AS number_of_instances\nFROM\n    cur\nWHERE\n    product_product_name IN ('Amazon Elastic Compute Cloud',\n                             'Amazon Relational Database Service',\n                             'AWS Database Migration Service',\n                             'AWS Neptune',\n                             'AWS DocumentDB')\n    AND product_instance_type <> ''\n    AND line_item_usage_amount > 0\nGROUP BY\n    product_physical_processor,\n    product_instance_type,\n    product_product_name\nORDER BY\n    vcpu_hours DESC,\n    processor_name,\n    instance_type;",
+          "refId": "A",
+          "table": "sustainability_report"
+        }
+      ],
+      "title": "vCPU Hours by Instance Type and Physical Processor",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "instance_family": true
+            },
+            "indexByName": {
+              "instance_family": 2,
+              "instance_type": 0,
+              "number_of_instances": 4,
+              "processor_name": 1,
+              "product_name": 5,
+              "usage_date": 6,
+              "vcpu_hours": 3
+            },
+            "renameByName": {
+              "instance_family": "",
+              "instance_type": "Instance Type",
+              "number_of_instances": "Instance Count",
+              "processor_name": "Physical Processor",
+              "product_name": "Product",
+              "usage_date": "Usage Date",
+              "vcpu_hours": "vCPU hours"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "${DS_CUR}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.processor_name}",
+          "mappings": [],
+          "min": -4,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Intel Skylake E5 2686 v5"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#8AB8FF",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "id": 38,
+      "interval": "86400s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "${DS_CUR}"
+          },
+          "format": 0,
+          "rawSQL": "WITH\n    cur AS (\n        SELECT *\n        FROM $__table\n        WHERE\n            \"line_item_usage_start_date\" BETWEEN TIMESTAMP '${__from:date:YYYY-MM-DD}' AND TIMESTAMP '${__to:date:YYYY-MM-DD}'\n            AND \"year\" BETWEEN '${__from:date:YYYY}' AND '${__to:date:YYYY}'\n            AND \"month\" BETWEEN '${__from:date:M}' AND '${__to:date:M}'\n            AND ${tag_key_full} = '${tag_value}'\n    )\nSELECT\n    CAST(line_item_usage_start_date AS date) AS usage_date,\n    product_physical_processor AS processor_name,\n    SUM(line_item_usage_amount) AS vcpu_hours_per_day\nFROM\n    cur\nWHERE\n    product_product_name IN ('Amazon Elastic Compute Cloud',\n                             'Amazon Relational Database Service',\n                             'AWS Database Migration Service',\n                             'AWS Neptune',\n                             'AWS DocumentDB')\n    AND product_instance_type <> ''\n    AND line_item_usage_amount > 0\nGROUP BY\n    product_physical_processor,\n    CAST(line_item_usage_start_date AS date)\nORDER BY\n    usage_date,\n    processor_name;\n\n",
+          "refId": "A",
+          "table": "sustainability_report"
+        }
+      ],
+      "title": "Daily vCPU Hours by Physical Processor",
+      "type": "timeseries"
+    },
+    {
+      "description": "",
+      "gridPos": {
+        "h": 2,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 39,
+      "options": {
+        "content": "Amazon EC2 Spot Instances let you take advantage of unused EC2 capacity in the AWS cloud, helping to improve improve the utilization of AWS data centres. ",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.7",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "${DS_CUR}"
+      },
+      "description": "Amazon EC2 Spot Instances let you take advantage of unused EC2 capacity in the AWS cloud, helping to improve improve the utilization of AWS data centres. ",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.case_purchase_option}",
+          "mappings": [],
+          "min": -4,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 26
+      },
+      "id": 15,
+      "interval": "86400s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "${DS_CUR}"
+          },
+          "format": 0,
+          "rawSQL": "WITH\n    cur AS (\n        SELECT *\n        FROM $__table\n        WHERE\n            \"line_item_usage_start_date\" BETWEEN TIMESTAMP '${__from:date:YYYY-MM-DD}' AND TIMESTAMP '${__to:date:YYYY-MM-DD}'\n            AND \"year\" BETWEEN '${__from:date:YYYY}' AND '${__to:date:YYYY}'\n            AND \"month\" BETWEEN '${__from:date:M}' AND '${__to:date:M}'\n            AND ${tag_key_full} = '${tag_value}'\n    )\nSELECT\n    CAST(line_item_usage_start_date AS date) AS usage_date,\n    SUM(line_item_usage_amount) AS vcpu_hours_per_day,\n    CASE\n      WHEN (savings_plan_savings_plan_a_r_n <> '') THEN 'SavingsPlan'\n      WHEN (reservation_reservation_a_r_n <> '') THEN 'Reserved'\n      WHEN (line_item_usage_type LIKE '%Spot%') THEN 'Spot'\n      ELSE 'OnDemand' \n    END AS case_purchase_option\nFROM\n    cur\nWHERE\n    product_product_name IN ('Amazon Elastic Compute Cloud')\n    AND product_instance_type <> ''\n    AND line_item_usage_amount > 0\n    AND line_item_operation LIKE '%RunInstances%'\n    AND line_item_usage_type NOT LIKE '%DataXfer%'\n    AND (line_item_line_item_type = 'Usage'\n    OR (line_item_line_item_type = 'SavingsPlanCoveredUsage')\n    OR (line_item_line_item_type = 'DiscountedUsage')\n    )\nGROUP BY\n    CAST(line_item_usage_start_date AS date),\n    3 --case_purchase_option\nORDER BY\n    usage_date",
+          "refId": "A",
+          "table": "sustainability_report"
+        }
+      ],
+      "title": "Spot vCPU Hours",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
+      "id": 8,
+      "panels": [],
+      "title": "Compute & Database Utilization (Regional)",
+      "type": "row"
+    },
+    {
+      "description": "",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 21,
+      "options": {
+        "content": "Servers draw power even when idle so the relationship between power consumption and utilization is not linear.\n<br />To run efficiently in Cloud, distribute applications to instance and resource size that maximise utilization.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.7",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${DS_CLOUDWATCH}"
+      },
+      "description": "Maximum CPU Utilization over a 6 hour period.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "displayName": "${__field.labels.InstanceId}",
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              },
+              {
+                "color": "transparent",
+                "value": 30
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 39
+      },
+      "id": 4,
+      "interval": "21600",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "alias": "",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${DS_CLOUDWATCH}"
+          },
+          "dimensions": {
+            "InstanceId": "$EC2_Ids"
+          },
+          "expression": "",
+          "id": "",
+          "matchExact": true,
+          "metricEditorMode": 0,
+          "metricName": "CPUUtilization",
+          "metricQueryType": 0,
+          "namespace": "AWS/EC2",
+          "period": "",
+          "queryMode": "Metrics",
+          "refId": "A",
+          "region": "default",
+          "sqlExpression": "",
+          "statistic": "Maximum"
+        }
+      ],
+      "title": "Maximum CPU Utilization (EC2)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${DS_CLOUDWATCH}"
+      },
+      "description": "Maximum CPU Utilization over a 6 hour period.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              },
+              {
+                "color": "transparent",
+                "value": 30
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 39
+      },
+      "id": 32,
+      "interval": "21600",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "alias": "",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${DS_CLOUDWATCH}"
+          },
+          "dimensions": {},
+          "expression": "",
+          "id": "",
+          "matchExact": true,
+          "metricEditorMode": 0,
+          "metricName": "CPUUtilization",
+          "metricQueryType": 0,
+          "namespace": "AWS/RDS",
+          "period": "",
+          "queryMode": "Metrics",
+          "refId": "A",
+          "region": "default",
+          "sqlExpression": "",
+          "statistic": "Maximum"
+        }
+      ],
+      "title": "Maximum CPU Utilization (RDS)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${DS_CLOUDWATCH}"
+      },
+      "description": "Instances with continuously low max CPU utiilization (under <30%) may bee good candidates for rightsizing",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 48
+      },
+      "id": 12,
+      "maxDataPoints": 10,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "alias": "",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${DS_CLOUDWATCH}"
+          },
+          "dimensions": {},
+          "expression": "",
+          "id": "",
+          "matchExact": true,
+          "metricEditorMode": 1,
+          "metricName": "",
+          "metricQueryType": 1,
+          "namespace": "",
+          "period": "",
+          "queryMode": "Metrics",
+          "refId": "A",
+          "region": "default",
+          "sql": {
+            "select": {
+              "name": "AVG",
+              "type": "function"
+            }
+          },
+          "sqlExpression": "SELECT MAX(CPUUtilization) \nFROM SCHEMA(\"AWS/EC2\", InstanceId) \nGROUP BY InstanceId \nORDER BY MAX() ASC ",
+          "statistic": "Average"
+        }
+      ],
+      "title": "EC2 Instances with Low CPU Utilization",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "${DS_CLOUDWATCH}"
+      },
+      "description": "Instances with continuously low max CPU utiilization (under <30%) may bee good candidates for rightsizing",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 48
+      },
+      "id": 33,
+      "maxDataPoints": 10,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "alias": "",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "${DS_CLOUDWATCH}"
+          },
+          "dimensions": {},
+          "expression": "",
+          "id": "",
+          "matchExact": true,
+          "metricEditorMode": 1,
+          "metricName": "",
+          "metricQueryType": 1,
+          "namespace": "",
+          "period": "",
+          "queryMode": "Metrics",
+          "refId": "A",
+          "region": "default",
+          "sql": {
+            "select": {
+              "name": "AVG",
+              "type": "function"
+            }
+          },
+          "sqlExpression": "SELECT MAX(CPUUtilization) \nFROM SCHEMA(\"AWS/RDS\", DBInstanceIdentifier) \nGROUP BY DBInstanceIdentifier \nORDER BY MAX() ASC ",
+          "statistic": "Average"
+        }
+      ],
+      "title": "RDS Instances with Low CPU Utilization",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 55
+      },
+      "id": 25,
+      "panels": [],
+      "title": "Waste Reduction (Global)",
+      "type": "row"
+    },
+    {
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 56
+      },
+      "id": 27,
+      "options": {
+        "content": "Not using energy avoids carbon emissions in the first instance. Removing unused resources and reducing waste will reduce emissions.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.7",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "${DS_CUR}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "product_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 324
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "processor_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 320
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Physical Processor"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 164
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "vCPU hours"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 140
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Instance Count"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 129
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Product"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 182
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Usage Date"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 162
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Daily vCPU hours"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 87
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Daily Instance Count"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 77
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Region"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 141
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Number Of Resources"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 171
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Usage Account ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 129
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "split_line_item_resource_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 545
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 13,
+        "x": 0,
+        "y": 58
+      },
+      "id": 36,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "${DS_CUR}"
+          },
+          "format": 1,
+          "rawSQL": "WITH\n    cur AS (\n        SELECT *\n        FROM $__table\n        WHERE\n            \"line_item_usage_start_date\" BETWEEN TIMESTAMP '${__from:date:YYYY-MM-DD}' AND TIMESTAMP '${__to:date:YYYY-MM-DD}'\n            AND \"year\" BETWEEN '${__from:date:YYYY}' AND '${__to:date:YYYY}'\n            AND \"month\" BETWEEN '${__from:date:M}' AND '${__to:date:M}'\n            AND ${tag_key_full} = '${tag_value}'\n    )\nSELECT\n  bill_payer_account_id,\n  SPLIT_PART(line_item_resource_id, ':', 6) split_line_item_resource_id,\n  product_region\nFROM\n  (\n    SELECT\n      line_item_resource_id,\n      product_region,\n      pricing_unit,\n      line_item_usage_account_id,\n      bill_payer_account_id,\n      SUM(SUM(line_item_usage_amount)) OVER (PARTITION BY line_item_resource_id, pricing_unit) AS usage_per_resource_and_pricing_unit,\n      COUNT(pricing_unit) OVER (PARTITION BY line_item_resource_id) AS pricing_unit_per_resource\n    FROM\n      cur\n    WHERE\n      line_item_product_code = 'AWSELB'\n      AND line_item_line_item_type = 'Usage'\n    GROUP BY\n      line_item_resource_id,\n      product_region,\n      pricing_unit,\n      line_item_usage_account_id,\n      bill_payer_account_id\n  )\nWHERE\n  -- filter only resources which have been unused more than 7 days\n  usage_per_resource_and_pricing_unit >= 168\n  -- filter for unused ELBs, as determined by where there's only one pricing unit (typically hours) and not GBs or LCUs. \n  AND pricing_unit_per_resource = 1\n",
+          "refId": "A",
+          "table": "sustainability_report"
+        }
+      ],
+      "title": "ELBs unused for 7 days or more",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "bill_payer_account_id": true,
+              "instance_family": true
+            },
+            "indexByName": {
+              "instance_family": 2,
+              "instance_type": 0,
+              "number_of_instances": 4,
+              "processor_name": 1,
+              "product_name": 5,
+              "usage_date": 6,
+              "vcpu_hours": 3
+            },
+            "renameByName": {
+              "instance_family": "",
+              "instance_type": "Instance Type",
+              "line_item_usage_account_id": "Usage Account ID",
+              "number_of_instances": "Instance Count",
+              "number_of_resources": "Number Of Resources",
+              "processor_name": "Physical Processor",
+              "product_name": "Product",
+              "product_region": "Region",
+              "split_line_item_resource_id": "Resource Id",
+              "usage_date": "Usage Date",
+              "vcpu_hours": "vCPU hours"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 62
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Carbon Emission & Energy Data",
+      "type": "row"
+    },
+    {
+      "description": "",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 63
+      },
+      "id": 40,
+      "options": {
+        "content": "Carbon intensity measures how much carbon dixiode equivalent (CO2e) is emitted per kilowatt-hour (KWh) of electricity consumed.\n\nThis section considers 12 month historical grid carbon intensity and doesn't consider any market based instruments such as Renewable Energy Certificates or contractual agreements.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.7",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "${DS_CUR}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "product_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 324
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Instance Count"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 129
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Number of Resource"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 163
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Number of Resources"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 159
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CO2e (g/kWh)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 156
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 13,
+        "x": 0,
+        "y": 66
+      },
+      "id": 41,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 1,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "${DS_CUR}"
+          },
+          "format": 1,
+          "rawSQL": "WITH\n    cur AS (\n        SELECT *\n        FROM $__table\n        WHERE\n            \"line_item_usage_start_date\" BETWEEN TIMESTAMP '${__from:date:YYYY-MM-DD}' AND TIMESTAMP '${__to:date:YYYY-MM-DD}'\n            AND \"year\" BETWEEN '${__from:date:YYYY}' AND '${__to:date:YYYY}'\n            AND \"month\" BETWEEN '${__from:date:M}' AND '${__to:date:M}'\n            AND ${tag_key_full} = '${tag_value}'\n    )\nSELECT\n    CASE product_region\n    WHEN NULL THEN 'Global'\n    WHEN '' THEN 'Global'\n    WHEN 'global' THEN 'Global'\n    ELSE product_region\n    END AS region,\n    COUNT(DISTINCT line_item_resource_id) AS number_of_resources\nFROM\n    cur\nGROUP BY\n    1\nORDER BY number_of_resources DESC\n",
+          "refId": "A",
+          "table": "sustainability_report"
+        },
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "sustainability_metrics_dashboard_data",
+            "region": "__default"
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "${DS_CUR}"
+          },
+          "format": 1,
+          "hide": false,
+          "rawSQL": "SELECT region, co2e, source FROM $__table",
+          "refId": "B",
+          "table": "carbon_intensity"
+        }
+      ],
+      "title": "Number of Resources per Region",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "co2e": "CO2e (g/kWh)",
+              "number_of_resources": "Number of Resources",
+              "region": "Region",
+              "source": "Source"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "${DS_METRICS}"
+      },
+      "description": "Carbon Emissions Factors (gCO₂eq/kWh) of electricity grid where the region is located.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 17,
+        "x": 0,
+        "y": 77
+      },
+      "id": 2,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 45,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "${DS_METRICS}"
+          },
+          "format": 1,
+          "rawSQL": "SELECT region, co2e, source FROM $__table",
+          "refId": "A",
+          "table": "carbon_intensity"
+        }
+      ],
+      "title": "Grid Carbon Intensity per Region (gCO₂eq/kWh) ",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "date_retrieved": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "barchart"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": "ALL",
+        "current": {},
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "${DS_CUR}"
+        },
+        "definition": "",
+        "description": "Tag key to filter on. Choose from a list of cost allocation tags.",
+        "hide": 0,
+        "includeAll": true,
+        "label": "AWS Tag Key",
+        "multi": false,
+        "name": "tag_key",
+        "options": [],
+        "query": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "format": 1,
+          "rawSQL": "SELECT column_name\nFROM   information_schema.columns\nWHERE  table_name = 'sustainability_report'\nAND column_name LIKE 'resource_tags_user_%'\n",
+          "table": "sustainability_report"
+        },
+        "refresh": 1,
+        "regex": "/resource_tags_user_(?<text>\\w*$)/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "${DS_CUR}"
+        },
+        "definition": "",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "tag_key_full",
+        "options": [],
+        "query": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "format": 1,
+          "rawSQL": "SELECT IF('${tag_key}'='ALL', 'bill_invoicing_entity', 'resource_tags_user_${tag_key}')\n"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "${DS_CUR}"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Tag Value",
+        "multi": false,
+        "name": "tag_value",
+        "options": [],
+        "query": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default"
+          },
+          "format": 1,
+          "rawSQL": "SELECT DISTINCT $tag_key_full\nFROM $__table() \nWHERE\n  \"line_item_usage_start_date\" BETWEEN TIMESTAMP '${__from:date:YYYY-MM-DD}' AND TIMESTAMP '${__to:date:YYYY-MM-DD}'\n  AND \"year\" BETWEEN '${__from:date:YYYY}' AND '${__to:date:YYYY}'\n  AND \"month\" BETWEEN '${__from:date:M}' AND '${__to:date:M}'\n",
+          "table": "sustainability_report"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${DS_CLOUDWATCH}"
+        },
+        "definition": "regions()",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Region",
+        "multi": false,
+        "name": "region",
+        "options": [],
+        "query": "regions()",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": "*",
+        "current": {},
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "${DS_CLOUDWATCH}"
+        },
+        "definition": "ec2_instance_attribute($region, InstanceId, {\"tag:$tag_key\": [\"$tag_value\"]})",
+        "hide": 0,
+        "includeAll": true,
+        "label": "EC2 Instance IDs",
+        "multi": true,
+        "name": "EC2_Ids",
+        "options": [],
+        "query": "ec2_instance_attribute($region, InstanceId, {\"tag:$tag_key\": [\"$tag_value\"]})",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": false,
+    "refresh_intervals": [
+      "1d",
+      "2d",
+      "3d",
+      "7d",
+      "14d"
+    ]
+  },
+  "timezone": "",
+  "title": "Cloud Sustainability Metrics",
+  "uid": "YpJuJNS4k3",
+  "version": 8,
+  "weekStart": ""
+}
