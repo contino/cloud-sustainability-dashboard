@@ -1,0 +1,46 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.2.0
+  hooks:
+  - id: check-added-large-files
+  - id: check-case-conflict
+- repo: https://github.com/awslabs/git-secrets
+  rev: 99d01d5
+  hooks:
+  - id: git-secrets
+- repo: https://github.com/antonbabenko/pre-commit-terraform
+  rev: v1.76.0
+  hooks:
+  - id: terraform_fmt
+    args:
+    - --args=-recursive
+    - --args=-check
+  - id: terraform_validate
+    exclude: terraform/modules/aws_cur_stack/[^/]+$
+    args:
+    - --tf-init-args=-reconfigure
+    - --tf-init-args=-upgrade
+    - --tf-init-args=-backend=false
+  - id: terraform_checkov
+- repo: https://github.com/PyCQA/flake8
+  rev: 5.0.4
+  hooks:
+  - id: flake8
+    args:
+    - --config=collect-resource-data/.flake8
+- repo: local
+  hooks:
+  - id: pipenv-check
+    name: pipenv-check
+    entry: make check
+    language: system
+    types: [python]
+    pass_filenames: false
+  - id: test-unit
+    name: test-unit
+    entry: make test_unit
+    language: system
+    types: [python]
+    pass_filenames: false
