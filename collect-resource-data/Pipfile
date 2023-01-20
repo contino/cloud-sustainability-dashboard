@@ -14,6 +14,7 @@ awswrangler = "~=2.17.0"
 aws-lambda-powertools = "~=1.31.1"
 boto3-stubs = {version = "~=1.24.92", extras = ["all"]}
 moto = "~=4.0.7"
+pyparsing = "~=3.0.9"
 
 [requires]
 python_version = "3.9"
