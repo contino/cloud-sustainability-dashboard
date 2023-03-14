@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-wheel = "==0.38.0"
+wheel = "~=0.38.0"
 
 [dev-packages]
 pytest = "~=7.2.0"
